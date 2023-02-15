@@ -1,4 +1,7 @@
 require 'pry'
+require_relative '../lib/concerns/memorable'
+require_relative '../lib/concerns/paramable'
+require_relative '../lib/concerns/findable'
 
 class Song
   attr_accessor :name
@@ -14,14 +17,14 @@ class Song
   # automatically be added to the @@songs array, which is a useful way 
   # to keep track of all the song objects that have been created.
   def initialize
-    @@songs << self
+    super
   end
 
-  def self.find_by_name(name)
-    # checks if the name attribute of the song object a matches the name 
-    # argument passed to the method.
-    @@songs.detect{|a| a.name == name}
-  end
+  # def self.find_by_name(name)
+  #   # checks if the name attribute of the song object a matches the name 
+  #   # argument passed to the method.
+  #   @@songs.detect{|a| a.name == name}
+  # end
 
   # returns the entire list of songs array
   def self.all
@@ -29,14 +32,19 @@ class Song
   end
 
   # class method that clears the @@songs array
-  def self.reset_all
-    self.all.clear
-  end
+  # def self.reset_all
+  #   self.all.clear
+  # end
 
-  # returns the number of song objects in the @@songs array.
-  def self.count
-    self.all.count
-  end
+  extend Memorable::ClassMethods, Findable
+  include Paramable::InstanceMethods
+  include Memorable::InstanceMethods
+
+
+  # # returns the number of song objects in the @@songs array.
+  # def self.count
+  #   self.all.count
+  # end
 
   # instance method that sets the artist attribute of the current song object.
   def artist=(artist)
@@ -45,9 +53,9 @@ class Song
 
   # is an instance method that returns a URL-friendly version of the name
   #  attribute (i.e. with spaces replaced by hyphens).
-  def to_param
-    name.downcase.gsub(' ', '-')
-  end
+  # def to_param
+  #   name.downcase.gsub(' ', '-')
+  # end
 end
 
 
@@ -65,4 +73,8 @@ end
 # This will output the name and artist of each song in the list. Note that 
 # the artist attribute is read-only, so you can only retrieve its value using
 # the attr_reader method.
+
+# So, we can use the super keyword to tell our Artist's .initialize method to use 
+# the code in the Memorable::InstanceMethods module's .initialize method and also 
+# to use any additional code in the Artist's .initialize method.
 
